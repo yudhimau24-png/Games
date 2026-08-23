@@ -1,0 +1,253 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none; /* Mencegah layar HP bergeser/zoom saat tombol di-tap */
+}
+
+body {
+    background-color: #050508;
+    color: #e0d8c3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Container Utama Mengikuti 100% Layar HP */
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    max-width: 133.33vh; /* Menjaga rasio proporsional 4:3 tanpa distorsi */
+    max-height: 75vw;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
+    border: 2px solid #5a4729;
+    background-color: #000;
+    overflow: hidden;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+}
+
+/* UI Screens & Overlays */
+.ui-screen {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(15, 12, 20, 0.85);
+    z-index: 10;
+}
+
+.overlay-screen { background: rgba(10, 5, 5, 0.92); }
+.hidden { display: none !important; }
+
+/* Menus & Titles */
+.game-title {
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    text-align: center;
+    color: #d4af37;
+    text-shadow: 0 0 10px #000;
+    margin-bottom: 15px;
+}
+.game-title span { font-size: 0.7em; color: #a8201a; }
+
+.danger-title { font-size: clamp(2rem, 6vw, 3rem); color: #a8201a; }
+.victory-title { font-size: clamp(2rem, 6vw, 3rem); color: #d4af37; }
+
+.ending-text {
+    width: 80%; text-align: center;
+    font-size: clamp(0.8rem, 2.5vw, 1.1rem);
+    margin-bottom: 15px; color: #c9c3b0;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: min(200px, 60vw);
+}
+
+.btn {
+    padding: 8px 16px;
+    font-size: clamp(0.8rem, 2.5vw, 1rem);
+    font-weight: bold;
+    color: #f0e6d2;
+    background: linear-gradient(180deg, #3a2e1e, #1a140d);
+    border: 2px solid #8c6d3b;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-danger {
+    background: linear-gradient(180deg, #8b0000, #3a0000);
+    border-color: #e74c3c;
+    color: #ffcccc;
+}
+
+.btn-restart {
+    padding: 4px 8px;
+    font-size: clamp(0.65rem, 2vw, 0.75rem);
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(180deg, #c0392b, #78281f);
+    border: 1px solid #e74c3c;
+    border-radius: 4px;
+}
+
+/* HUD System */
+#hud {
+    background: transparent;
+    pointer-events: none;
+    justify-content: space-between;
+    padding: 8px;
+}
+
+.hud-top-left, .hud-top-right {
+    position: absolute;
+    top: 8px;
+    display: flex;
+    pointer-events: auto;
+}
+
+.hud-top-left { left: 8px; flex-direction: column; gap: 4px; }
+.hud-top-right { right: 8px; flex-direction: column; align-items: flex-end; gap: 4px; }
+.hud-right-stats { display: flex; gap: 4px; }
+
+.stat-bar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(0, 0, 0, 0.65);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #444;
+}
+
+.stat-bar label { font-size: 0.65rem; font-weight: bold; width: 25px; }
+
+.bar-bg {
+    width: clamp(60px, 15vw, 100px);
+    height: 8px;
+    background: #222;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.bar-fill { height: 100%; width: 100%; }
+.hp-fill { background: linear-gradient(90deg, #8b0000, #ff3333); }
+.exp-fill { background: linear-gradient(90deg, #104e8b, #1e90ff); }
+
+#hp-text, #exp-text { font-size: 0.6rem; color: #fff; }
+
+.coin-display, .location-display {
+    background: rgba(0, 0, 0, 0.75);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #d4af37;
+    font-size: clamp(0.6rem, 1.8vw, 0.75rem);
+    font-weight: bold;
+}
+
+/* KONTROL RESPONSIF LAYAR SENTUH HP */
+#mobile-controls {
+    position: absolute;
+    bottom: 5px;
+    left: 0; right: 0;
+    height: clamp(100px, 28vh, 160px);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 10px;
+    pointer-events: auto;
+    z-index: 15;
+}
+
+/* D-Pad Arah */
+.dpad { display: flex; flex-direction: column; align-items: center; }
+.dpad-middle { display: flex; align-items: center; }
+.dpad-center { width: clamp(24px, 6vh, 38px); height: clamp(24px, 6vh, 38px); background: #111; }
+
+.dbtn {
+    width: clamp(30px, 7.5vh, 42px);
+    height: clamp(30px, 7.5vh, 42px);
+    background: rgba(40, 30, 20, 0.85);
+    border: 1.5px solid #8c6d3b;
+    color: #f1c40f;
+    font-size: clamp(0.8rem, 2.5vh, 1.2rem);
+    font-weight: bold;
+    border-radius: 4px;
+    display: flex; justify-content: center; align-items: center;
+}
+.dbtn:active { background: #d4af37; color: #000; }
+
+/* Bar Senjata */
+.weapon-bar-touch {
+    display: flex;
+    gap: 3px;
+    background: rgba(0,0,0,0.7);
+    padding: 3px;
+    border-radius: 4px;
+    border: 1px solid #5a4729;
+    margin-bottom: 5px;
+}
+.wp-btn {
+    padding: 4px 6px;
+    font-size: clamp(0.55rem, 1.8vh, 0.75rem);
+    background: #2a2015;
+    color: #fff;
+    border: 1px solid #8c6d3b;
+    border-radius: 3px;
+}
+
+/* Tombol Aksi */
+.action-buttons { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.action-top { display: flex; gap: 4px; }
+.action-main { display: flex; gap: 4px; }
+
+.abtn {
+    background: linear-gradient(180deg, #4a2e1e, #1a0f0a);
+    border: 1.5px solid #8c6d3b;
+    color: #fff;
+    font-weight: bold;
+    border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    font-size: clamp(0.65rem, 2vh, 0.8rem);
+}
+.abtn.small {
+    width: clamp(26px, 6.5vh, 36px);
+    height: clamp(26px, 6.5vh, 36px);
+    border-radius: 4px;
+    font-size: 0.55rem;
+}
+.abtn.interact { width: clamp(32px, 8vh, 44px); height: clamp(32px, 8vh, 44px); background: #2980b9; }
+.abtn.shoot { width: clamp(36px, 9vh, 48px); height: clamp(36px, 9vh, 48px); background: #d35400; font-size: 0.65rem; }
+.abtn.attack { width: clamp(42px, 10vh, 54px); height: clamp(42px, 10vh, 54px); background: #c0392b; font-size: 0.85rem; }
+
+/* Dialogues Box */
+.dialogue-box {
+    position: absolute;
+    top: 45px;
+    left: 10px; right: 10px;
+    background: rgba(15, 12, 10, 0.95);
+    border: 2px solid #d4af37;
+    border-radius: 6px;
+    padding: 8px 12px;
+    z-index: 100;
+}
+.speaker-name { font-weight: bold; color: #d4af37; font-size: 0.8rem; }
+.dialogue-text { font-size: clamp(0.7rem, 2.2vw, 0.85rem); line-height: 1.2; }
+.dialogue-hint { font-size: 0.6rem; color: #00ff88; text-align: right; margin-top: 4px; }
