@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mystery of Nurul & Althaff</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Canvas Utama Game -->
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+        <!-- UI Overlay: Main Menu -->
+        <div id="main-menu" class="ui-screen active">
+            <h1 class="game-title">Mystery of the<br><span>LOST KINGDOM</span></h1>
+            <div class="menu-buttons">
+                <button id="btn-new-game" class="btn">New Game</button>
+                <button id="btn-continue" class="btn">Continue</button>
+                <button id="btn-settings" class="btn">Settings</button>
+            </div>
+        </div>
+
+        <!-- UI Overlay: HUD Game -->
+        <div id="hud" class="ui-screen hidden">
+            <div class="hud-top-left">
+                <div class="stat-bar hp-container">
+                    <label>HP</label>
+                    <div class="bar-bg"><div id="hp-bar-fill" class="bar-fill hp-fill"></div></div>
+                    <span id="hp-text">100/100</span>
+                </div>
+                <div class="stat-bar exp-container">
+                    <label>EXP</label>
+                    <div class="bar-bg"><div id="exp-bar-fill" class="bar-fill exp-fill"></div></div>
+                    <span id="exp-text">Lvl 1 (0/100)</span>
+                </div>
+            </div>
+
+            <div class="hud-top-right">
+                <div class="coin-display">💰 <span id="gold-text">0</span></div>
+                <div class="location-display">📍 <span id="location-text">Village</span></div>
+            </div>
+
+            <div class="hud-controls-hint">
+                [WASD/Panah] Jalan | [Space] Serang | [E] Interaksi | [I] Inventory | [Q] Quest | [Esc] Pause
+            </div>
+        </div>
+
+        <!-- Modal Inventory -->
+        <div id="modal-inventory" class="modal hidden">
+            <div class="modal-content">
+                <h2>Inventory</h2>
+                <div id="inventory-grid" class="inventory-grid"></div>
+                <button class="btn btn-close" onclick="toggleModal('modal-inventory')">Tutup [I]</button>
+            </div>
+        </div>
+
+        <!-- Modal Quest -->
+        <div id="modal-quest" class="modal hidden">
+            <div class="modal-content">
+                <h2>Quest Log</h2>
+                <div id="quest-list" class="quest-list"></div>
+                <button class="btn btn-close" onclick="toggleModal('modal-quest')">Tutup [Q]</button>
+            </div>
+        </div>
+
+        <!-- Dialogue Box -->
+        <div id="dialogue-box" class="dialogue-box hidden">
+            <div id="dialogue-speaker" class="speaker-name">NPC</div>
+            <div id="dialogue-text" class="dialogue-text">...</div>
+            <div class="dialogue-hint">Tekan [E] untuk lanjut</div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="screen-gameover" class="ui-screen hidden overlay-screen">
+            <h1 class="danger-title">GAME OVER</h1>
+            <div class="menu-buttons">
+                <button id="btn-retry" class="btn">Retry</button>
+                <button id="btn-load-die" class="btn">Load Game</button>
+                <button id="btn-menu-die" class="btn">Main Menu</button>
+            </div>
+        </div>
+
+        <!-- Victory / Ending Screen -->
+        <div id="screen-victory" class="ui-screen hidden overlay-screen">
+            <h1 class="victory-title">VICTORY!</h1>
+            <p class="ending-text">Anda telah mengalahkan Guardian dan mengembalikan kedamaian di Lost Kingdom!</p>
+            <div class="menu-buttons">
+                <button id="btn-victory-menu" class="btn">Main Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
