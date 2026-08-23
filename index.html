@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mystery of the Lost Kingdom</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Canvas Utama Game -->
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+        <!-- UI Overlay: Main Menu -->
+        <div id="main-menu" class="ui-screen active">
+            <h1 class="game-title">Mystery of the<br><span>LOST KINGDOM</span></h1>
+            <div class="menu-buttons">
+                <button id="btn-new-game" class="btn">New Game</button>
+                <button id="btn-continue" class="btn">Continue</button>
+                <button id="btn-settings" class="btn">Settings</button>
+            </div>
+        </div>
+
+        <!-- UI Overlay: HUD Game -->
+        <div id="hud" class="ui-screen hidden">
+            <div class="hud-top-left">
+                <div class="stat-bar hp-container">
+                    <label>HP</label>
+                    <div class="bar-bg"><div id="hp-bar-fill" class="bar-fill hp-fill"></div></div>
+                    <span id="hp-text">150/150</span>
+                </div>
+                <div class="stat-bar exp-container">
+                    <label>EXP</label>
+                    <div class="bar-bg"><div id="exp-bar-fill" class="bar-fill exp-fill"></div></div>
+                    <span id="exp-text">Lvl 1 (0/100)</span>
+                </div>
+            </div>
+
+            <div class="hud-top-right">
+                <div class="coin-display">💰 <span id="gold-text">0</span></div>
+                <div class="location-display">📍 <span id="location-text">Village</span></div>
+            </div>
+
+            <!-- Virtual Controller Layar Sentuh HP -->
+            <div id="mobile-controls">
+                <!-- D-Pad Arah Jalan -->
+                <div class="dpad">
+                    <button id="btn-up" class="dbtn up">▲</button>
+                    <div class="dpad-middle">
+                        <button id="btn-left" class="dbtn left">◀</button>
+                        <div class="dpad-center"></div>
+                        <button id="btn-right" class="dbtn right">▶</button>
+                    </div>
+                    <button id="btn-down" class="dbtn down">▼</button>
+                </div>
+
+                <!-- Bar Switch Senjata -->
+                <div class="weapon-bar-touch">
+                    <button id="btn-wp1" class="wp-btn">1: 🗡️</button>
+                    <button id="btn-wp2" class="wp-btn">2: 🔫</button>
+                    <button id="btn-wp3" class="wp-btn">3: 🪄</button>
+                    <button id="btn-wp4" class="wp-btn">4: 💥</button>
+                </div>
+
+                <!-- Tombol Aksi -->
+                <div class="action-buttons">
+                    <div class="action-top">
+                        <button id="btn-inv" class="abtn small">INV</button>
+                        <button id="btn-qst" class="abtn small">QST</button>
+                    </div>
+                    <div class="action-main">
+                        <button id="btn-interact" class="abtn interact">E</button>
+                        <button id="btn-shoot" class="abtn shoot">F</button>
+                        <button id="btn-attack" class="abtn attack">⚔️</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Inventory -->
+        <div id="modal-inventory" class="modal hidden">
+            <div class="modal-content">
+                <h2>Inventory</h2>
+                <div id="inventory-grid" class="inventory-grid"></div>
+                <button class="btn btn-close" onclick="toggleModal('modal-inventory')">Tutup [I]</button>
+            </div>
+        </div>
+
+        <!-- Modal Quest -->
+        <div id="modal-quest" class="modal hidden">
+            <div class="modal-content">
+                <h2>Quest Log</h2>
+                <div id="quest-list" class="quest-list"></div>
+                <button class="btn btn-close" onclick="toggleModal('modal-quest')">Tutup [Q]</button>
+            </div>
+        </div>
+
+        <!-- Dialogue Box (Langsung Tap di Mana Saja) -->
+        <div id="dialogue-box" class="dialogue-box hidden" onclick="if(typeof advanceDialogue==='function') advanceDialogue();">
+            <div id="dialogue-speaker" class="speaker-name">NPC</div>
+            <div id="dialogue-text" class="dialogue-text">...</div>
+            <div class="dialogue-hint">👉 Tap layar di sini untuk lanjut 👈</div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="screen-gameover" class="ui-screen hidden overlay-screen">
+            <h1 class="danger-title">GAME OVER</h1>
+            <div class="menu-buttons">
+                <button id="btn-retry" class="btn">Retry</button>
+                <button id="btn-load-die" class="btn">Load Game</button>
+                <button id="btn-menu-die" class="btn">Main Menu</button>
+            </div>
+        </div>
+
+        <!-- Victory / Ending Screen -->
+        <div id="screen-victory" class="ui-screen hidden overlay-screen">
+            <h1 class="victory-title">VICTORY!</h1>
+            <p class="ending-text">Anda telah mengalahkan Guardian dan mengembalikan kedamaian di Lost Kingdom!</p>
+            <div class="menu-buttons">
+                <button id="btn-victory-menu" class="btn">Main Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Engine Game Utama -->
+    <script src="game.js"></script>
+
+    <!-- Script Kontrol Sentuh HP -->
+    <script>
+        function bindTouch(id, keyName) {
+            const btn = document.getElementById(id);
+            if (!btn) return;
+
+            const start = (e) => {
+                if (e.cancelable) e.preventDefault();
+                if (typeof keys !== 'undefined') keys[keyName] = true;
+                if (typeof handleKeyPress === 'function') handleKeyPress(keyName);
+            };
+
+            const end = (e) => {
+                if (e.cancelable) e.preventDefault();
+                if (typeof keys !== 'undefined') keys[keyName] = false;
+            };
+
+            btn.addEventListener('touchstart', start, { passive: false });
+            btn.addEventListener('touchend', end, { passive: false });
+            btn.addEventListener('touchcancel', end, { passive: false });
+            btn.addEventListener('mousedown', start);
+            btn.addEventListener('mouseup', end);
+        }
+
+        window.addEventListener('load', () => {
+            bindTouch('btn-up', 'w');
+            bindTouch('btn-down', 's');
+            bindTouch('btn-left', 'a');
+            bindTouch('btn-right', 'd');
+
+            bindTouch('btn-attack', ' ');
+            bindTouch('btn-shoot', 'f');
+            bindTouch('btn-interact', 'e');
+            bindTouch('btn-inv', 'i');
+            bindTouch('btn-qst', 'q');
+
+            bindTouch('btn-wp1', '1');
+            bindTouch('btn-wp2', '2');
+            bindTouch('btn-wp3', '3');
+            bindTouch('btn-wp4', '4');
+        });
+    </script>
+</body>
+</html>
