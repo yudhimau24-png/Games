@@ -1,0 +1,312 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+body {
+    background-color: #0b0b10;
+    color: #e0d8c3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+#game-container {
+    position: relative;
+    width: 800px;
+    height: 600px;
+    max-width: 100vw;
+    max-height: 100vh;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.9), 0 0 10px #e6b800;
+    border: 3px solid #5a4729;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: #000;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* UI Screens & Overlays */
+.ui-screen {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(15, 12, 20, 0.85);
+    z-index: 10;
+    transition: opacity 0.3s ease;
+}
+
+.overlay-screen {
+    background: rgba(10, 5, 5, 0.92);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Titles */
+.game-title {
+    font-size: 2.5rem;
+    text-align: center;
+    color: #d4af37;
+    text-shadow: 0 0 10px #000, 2px 2px 5px #000;
+    margin-bottom: 20px;
+}
+.game-title span {
+    font-size: 1.8rem;
+    color: #a8201a;
+}
+
+.danger-title { font-size: 3rem; color: #a8201a; text-shadow: 0 0 15px #ff0000; }
+.victory-title { font-size: 3rem; color: #d4af37; text-shadow: 0 0 15px #fff700; }
+
+.ending-text {
+    width: 80%;
+    text-align: center;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    color: #c9c3b0;
+}
+
+/* Buttons */
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 200px;
+}
+
+.btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #f0e6d2;
+    background: linear-gradient(180deg, #3a2e1e, #1a140d);
+    border: 2px solid #8c6d3b;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* HUD System */
+#hud {
+    background: transparent;
+    pointer-events: none;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.hud-top-left, .hud-top-right {
+    position: absolute;
+    top: 10px;
+    display: flex;
+    gap: 10px;
+    pointer-events: auto;
+}
+
+.hud-top-left { left: 10px; flex-direction: column; gap: 4px; }
+.hud-top-right { right: 10px; flex-direction: column; align-items: flex-end; }
+
+.stat-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0, 0, 0, 0.65);
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #444;
+}
+
+.stat-bar label { font-size: 0.75rem; font-weight: bold; width: 30px; }
+
+.bar-bg {
+    width: 100px;
+    height: 10px;
+    background: #222;
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid #555;
+}
+
+.bar-fill { height: 100%; width: 100%; }
+.hp-fill { background: linear-gradient(90deg, #8b0000, #ff3333); }
+.exp-fill { background: linear-gradient(90deg, #104e8b, #1e90ff); }
+
+#hp-text, #exp-text { font-size: 0.7rem; color: #fff; }
+
+.coin-display, .location-display {
+    background: rgba(0, 0, 0, 0.75);
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #d4af37;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+/* TOUCH CONTROLLER UNTUK HP ANDROID */
+#mobile-controls {
+    position: absolute;
+    bottom: 10px;
+    left: 0; right: 0;
+    height: 160px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 15px;
+    pointer-events: auto;
+    z-index: 15;
+}
+
+/* D-Pad */
+.dpad {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.dpad-middle {
+    display: flex;
+    align-items: center;
+}
+.dpad-center {
+    width: 38px;
+    height: 38px;
+    background: #111;
+}
+
+.dbtn {
+    width: 42px;
+    height: 42px;
+    background: rgba(40, 30, 20, 0.85);
+    border: 2px solid #8c6d3b;
+    color: #f1c40f;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.dbtn:active { background: #d4af37; color: #000; }
+
+/* Switch Senjata Touch */
+.weapon-bar-touch {
+    display: flex;
+    gap: 4px;
+    background: rgba(0,0,0,0.7);
+    padding: 4px;
+    border-radius: 6px;
+    border: 1px solid #5a4729;
+    margin-bottom: 10px;
+}
+.wp-btn {
+    padding: 6px 8px;
+    font-size: 0.75rem;
+    background: #2a2015;
+    color: #fff;
+    border: 1px solid #8c6d3b;
+    border-radius: 4px;
+}
+.wp-btn:active { background: #8e44ad; }
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+.action-top { display: flex; gap: 6px; }
+.action-main { display: flex; gap: 6px; }
+
+.abtn {
+    background: linear-gradient(180deg, #4a2e1e, #1a0f0a);
+    border: 2px solid #8c6d3b;
+    color: #fff;
+    font-weight: bold;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8rem;
+    box-shadow: 0 0 8px rgba(0,0,0,0.8);
+}
+.abtn.small { width: 36px; height: 36px; border-radius: 6px; font-size: 0.65rem; }
+.abtn.interact { width: 44px; height: 44px; background: #2980b9; }
+.abtn.shoot { width: 48px; height: 48px; background: #d35400; font-size: 0.7rem; }
+.abtn.attack { width: 54px; height: 54px; background: #c0392b; font-size: 1rem; }
+.abtn:active { transform: scale(0.92); opacity: 0.8; }
+
+/* Modals & Dialogues */
+.modal {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 20;
+}
+
+.modal-content {
+    background: #1a1612;
+    border: 2px solid #8c6d3b;
+    padding: 15px;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 8px;
+}
+
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 10px 0;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.inv-item {
+    background: #2a221b;
+    border: 1px solid #5a4729;
+    padding: 8px;
+    text-align: center;
+    font-size: 0.75rem;
+    border-radius: 4px;
+}
+
+.quest-list {
+    display: flex; flex-direction: column; gap: 8px;
+    margin: 10px 0; max-height: 200px; overflow-y: auto;
+}
+
+.quest-item {
+    background: #25201b; padding: 6px;
+    border-left: 3px solid #888; font-size: 0.8rem;
+}
+
+.dialogue-box {
+    position: absolute;
+    bottom: 10px; left: 15px; right: 15px;
+    background: rgba(15, 12, 10, 0.95);
+    border: 2px solid #d4af37;
+    border-radius: 6px;
+    padding: 10px;
+    z-index: 25;
+}
+
+.speaker-name { font-weight: bold; color: #d4af37; margin-bottom: 4px; }
+.dialogue-text { font-size: 0.85rem; }
+.dialogue-hint { font-size: 0.65rem; color: #888; text-align: right; margin-top: 4px; }
